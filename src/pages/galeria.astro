@@ -1,0 +1,193 @@
+---
+const fotos = [
+  { src: "/images/foto1.jpg", alt: "Foto 1" },
+  { src: "/images/foto2.jpg", alt: "Foto 2" },
+  { src: "/images/foto3.jpg", alt: "Foto 3" },
+  { src: "/images/foto4.jpg", alt: "Foto 4" },
+  { src: "/images/foto5.jpg", alt: "Foto 5" },
+  { src: "/images/foto6.jpg", alt: "Foto 6" },
+  { src: "/images/foto7.jpg", alt: "Foto 7" },
+  { src: "/images/foto8.jpg", alt: "Foto 8" },
+  { src: "/images/foto9.jpg", alt: "Foto 9" },
+  { src: "/images/foto10.jpg", alt: "Foto 10" },
+  { src: "/images/foto11.jpg", alt: "Foto 11" },
+  { src: "/images/foto12.jpg", alt: "Foto 12" },
+  { src: "/images/foto13.jpg", alt: "Foto 13" },
+  { src: "/images/foto14.jpg", alt: "Foto 14" },
+  { src: "/images/foto15.jpg", alt: "Foto 15" },
+  { src: "/images/foto16.jpg", alt: "Foto 16" },
+  { src: "/images/foto17.jpg", alt: "Foto 17" },
+];
+
+const galeriaPagina = "/galeria"; // Cambia por tu ruta
+// src/pages/index.astro
+import Layout from "../layouts/Layout.astro";
+import Welcome from "../components/Welcome.astro";
+import Invitacion from "../components/Invitacion.astro";
+import Collage from "../components/Collage.astro";
+import App from "../layouts/App.astro";
+---
+
+<App title="Galeria - Viridiana & Alexis" nombres="Viridiana & Alexis">
+  <section id="collage" style="
+  width: 100%;
+  padding: 6rem 1.5rem;
+  background: #f0f4fa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+  position: relative;
+  overflow: hidden;
+">
+
+  <!-- Encabezado -->
+  <div class="collage-header" style="
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+  ">
+    <div style="display:flex;align-items:center;gap:1rem;">
+      <div style="width:35px;height:1px;background:rgba(74,122,181,0.35);"></div>
+      <span style="font-family:'Jost',sans-serif;font-size:0.58rem;letter-spacing:0.35em;text-transform:uppercase;color:rgba(13,36,72,0.4);">Nuestros momentos</span>
+      <div style="width:35px;height:1px;background:rgba(74,122,181,0.35);"></div>
+    </div>
+    <h2 style="
+      font-family:'Cormorant Garamond',serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-style: italic;
+      color: #0d2448;
+      font-weight: 400;
+    ">Nuestra Historia</h2>
+  </div>
+
+  <!-- Grid masonry -->
+  <div id="masonry-grid" style="
+    width: 100%;
+    max-width: 1000px;
+    columns: 3;
+    column-gap: 0.75rem;
+  ">
+    {fotos.map((foto, i) => (
+      <div
+        class="masonry-item"
+        data-index={i}
+        style="
+          break-inside: avoid;
+          margin-bottom: 0.75rem;
+          border-radius: 6px;
+          overflow: hidden;
+          cursor: pointer;
+          position: relative;
+        "
+      >
+        <img
+          src={foto.src}
+          alt={foto.alt}
+          loading="lazy"
+          style="
+            width: 100%;
+            display: block;
+            object-fit: cover;
+            border-radius: 6px;
+            transition: transform 0.5s ease;
+          "
+          onerror={`this.parentElement.style.background='linear-gradient(160deg,#c8ddf0,#7aaad4)';this.parentElement.style.minHeight='${150 + (i % 3) * 60}px';this.style.display='none';`}
+        />
+        <!-- Overlay hover -->
+        <div class="foto-overlay" style="
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(to top, rgba(10,22,40,0.5) 0%, transparent 60%);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          border-radius: 6px;
+          display: flex;
+          align-items: flex-end;
+          padding: 1rem;
+        ">
+          <span style="
+            font-family:'Cormorant Garamond',serif;
+            font-style:italic;
+            color:white;
+            font-size:0.9rem;
+            opacity:0.9;
+          ">{foto.alt}</span>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- Degradado que tapa las últimas fotos -->
+  <div id="collage-fade" style="
+    position: absolute;
+    bottom: 80px;
+    left: 0;
+    width: 100%;
+    height: 220px;
+    background: linear-gradient(to bottom, transparent, #f0f4fa);
+    pointer-events: none;
+  "></div>
+
+</section>
+
+<style>
+  /* Responsive: 2 columnas en móvil */
+  @media (max-width: 640px) {
+    #masonry-grid { columns: 2; }
+  }
+
+  /* Fade in al entrar en viewport */
+  .masonry-item {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .masonry-item.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Hover zoom imagen */
+  .masonry-item:hover img {
+    transform: scale(1.04);
+  }
+  .masonry-item:hover .foto-overlay {
+    opacity: 1;
+  }
+
+  .collage-header {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .collage-header.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<script>
+  // ── Fade in escalonado al hacer scroll ───────────
+  const items = document.querySelectorAll('.masonry-item');
+  const header = document.querySelector('.collage-header');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  items.forEach((item, i) => {
+    (item as HTMLElement).style.transitionDelay = `${i * 0.07}s`;
+    observer.observe(item);
+  });
+
+  if (header) observer.observe(header);
+</script>
+</App>

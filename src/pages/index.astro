@@ -1,10 +1,104 @@
 ---
 // src/pages/index.astro
-import Layout from '../layouts/Layout.astro';
-import Welcome from '../components/Welcome.astro';
+import Layout from "../layouts/Layout.astro";
+import Welcome from "../components/Welcome.astro";
+import Invitacion from "../components/Invitacion.astro";
+import Collage from "../components/Collage.astro";
+import Protagonistas from "../components/Protagonistas.astro";
+import Ubicacion from "../components/Ubicacion.astro";
+import Vestimenta from "../components/Vestimenta.astro";
+import Regalos from "../components/Regalos.astro";
+import Asistencia from "../components/Asistencia.astro";
 ---
 
 <Layout title="¡Nos Casamos! - Viridiana & Alexis" nombres="Viridiana & Alexis">
- <Welcome/>
-</Layout>
+  <Welcome
+    novia="Viridiana"
+    novio="Alexis"
+    dia="04"
+    mes="Julio"
+    anio={2026}
+    hora="2026-07-04T15:45:00"
+    fotoSrc="/images/novios.jpg"
+  />
+  <Invitacion
+    novia="Fabiola Viridiana T. Bernal"
+    novio="Alexis Ricardo López Rosas"
+    titulo="Nuestra Boda"
+    texto="A ustedes nuestra familia, los conocemos, los amamos y los consentiremos en nuestra boda. Contamos con su compañía en esta fecha para formar parte de este momento inolvidable."
+    imagenArgollas="/images/argollas.webp"
+    etiqueta="Con amor"
+  />
+  <Protagonistas
+    protagonistas={{
+      novios: [
+        { nombre: "Alexis Ricardo López Rosas" },
+        { nombre: "Fabiola Viridiana T. Bernal" },
+      ],
+      padresNovio: [
+        { nombre: "Ricardo López Martínez" },
+        { nombre: "Maria Merced Rosas García" },
+      ],
+      madreNovia: [{ nombre: "E. Rocio Bernal Huerta" }],
+      padrinos: [
+        { nombre: "Jose Bernal Quintero" },
+        { nombre: "Guillermina Huerta Cruz" },
+      ],
+    }}
+  />
+  <Collage
+    galeriaPagina="/galeria"
+    fotos={[
+      { src: "/images/foto1.jpg", alt: "En el parque" },
+      { src: "/images/foto2.jpg", alt: "Nuestra primera cita" },
+      { src: "/images/foto3.jpg" },
+      { src: "/images/foto4.jpg" },
+      { src: "/images/foto5.jpg" },
+      { src: "/images/foto6.jpg" },
+      { src: "/images/foto7.jpg" },
+      { src: "/images/foto8.jpg" },
+      { src: "/images/foto9.jpg" },
+    ]}
+  />
+  <Ubicacion
+    lugares={[
+      {
+        tipo: "Ceremonia religiosa",
+        nombre: "Parroquia de Santiago Apóstol",
+        direccion: "Ayapango, Estado de México",
+        hora: "15:45 hrs",
+        icono: "iglesia",
+        mapaUrl: "https://maps.app.goo.gl/cvSHZBwNYCCnLKSa9",
+      },
+      {
+        tipo: "Ceremonia civil",
+        nombre: "Ceremonia Civil",
+        hora: "18:00 hrs",
+        icono: "civil",
+        descripcion:
+          "La celebración civil se llevará a cabo en el mismo lugar del evento.",
+      },
+      {
+        tipo: "Recepción",
+        nombre: "Lugar del Evento",
+        hora: "19:00 hrs",
+        icono: "recepcion",
+        descripcion: "Recepción y fiesta a partir de las 7:15 pm.",
+        mapaUrl: "https://maps.app.goo.gl/d7XvTdDF67u6hCgj8?g_st=aw",
+      },
+    ]}
+  />
+  <Vestimenta
+    codigoVestimenta="formal"
+    coloresNovio={["Azul Claro"]}
+    coloresNovia={["Blanco"]}
+  />
 
+  <Regalos tipoRegalo="ambos" />
+
+  <Asistencia
+    whatsappNumero="5514963947"
+    whatsappMensaje="Hola, confirmo mi asistencia a la boda de Viri & Alexis 🎊"
+    fechaLimiteRsvp="4 de julio de 2026"
+  />
+</Layout>

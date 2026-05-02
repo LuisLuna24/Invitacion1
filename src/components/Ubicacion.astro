@@ -1,0 +1,154 @@
+---
+// src/components/Ubicacion.astro
+
+type IconoTipo = "iglesia" | "civil" | "recepcion";
+
+interface Lugar {
+  tipo: string;
+  nombre: string;
+  direccion?: string;
+  hora: string;
+  descripcion?: string;
+  mapaUrl?: string;
+  icono?: IconoTipo;
+}
+
+interface Props {
+  lugares: Lugar[];
+}
+
+const { lugares } = Astro.props;
+
+const iconos: Record<IconoTipo, string> = {
+
+  iglesia: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-building-church"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M3 21l18 0" /><path d="M10 21v-4a2 2 0 0 1 4 0v4" /><path d="M10 5l4 0" /><path d="M12 3l0 5" /><path d="M6 21v-7m-2 2l8 -8l8 8m-2 -2v7" /></svg>`,
+
+  civil: `<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" id="Layer_1" width="209" height="209" fill="#000" stroke="#000" stroke-width="4.608" viewBox="-15.36 -15.36 542.72 542.72"><g id="SVGRepo_iconCarrier"><path d="M0 496.327h512V512H0zm23.792-120.05h-7.837v111.912h15.673v-95.816c36.151 3.917 64.385 34.623 64.385 71.798v24.017h15.673v-24.016c.001-48.466-39.428-87.895-87.894-87.895zM0 352.131h47.02v15.673H0zm15.956-184.004v175.958h15.673V183.801h112.418v40.198c0 57.48-46.763 104.244-104.244 104.244v15.673c66.123-.001 119.919-53.795 119.919-119.918v-55.872H15.956z"/><path d="M48.065 200.62h15.673v110.759H48.065zm0 215.249h15.673v72.098H48.065zm440.062-39.592c-48.465 0-87.895 39.429-87.895 87.895v24.017h15.673v-24.017c0-37.176 28.233-67.881 64.385-71.798v95.816h15.673V376.277zm-23.147-24.146H512v15.673h-47.02zM352.199 168.127v55.872c0 66.122 53.794 119.918 119.918 119.918v-15.673c-57.48 0-104.244-46.763-104.244-104.244v-40.198H480.29v160.284h15.674V168.127z"/><path d="M448.261 200.62h15.673v110.759h-15.673zm0 215.249h15.673v72.098h-15.673zM257.813 0h-19.834L8.359 123.24v36.629h495.282v-36.78zm-15.895 15.673h12.19l31.302 15.673h-72.694zm246.049 128.523H24.033v-8.359h192.261v-15.673H47.237l136.665-73.351v.208h132.811l146.078 73.143H295.706v15.673h192.261z"/><path d="M231.967 120.163h48.065v15.673h-48.065zm-64.783 48.066v15.673h8.359v56.424h49.11v-56.424h7.314v56.424h48.065v-56.424h7.314v56.424h49.11v-56.424h8.359v-15.673zm41.796 56.424h-17.763v-40.751h17.763zm55.379 0h-16.718v-40.751h16.718zm56.425 0H303.02v-40.751h17.763v40.751zm30.085 77.816c-12.064-12.064-28.106-18.709-45.168-18.709s-33.103 6.645-45.168 18.709l-.12.119-.119-.119c-12.064-12.064-28.106-18.709-45.168-18.709s-33.103 6.645-45.168 18.709-18.709 28.106-18.709 45.168 6.645 33.103 18.709 45.168l90.456 90.456 90.455-90.456c12.064-12.064 18.709-28.106 18.709-45.168 0-17.063-6.644-33.104-18.709-45.168zm-11.081 79.254-79.373 79.372-79.372-79.372c-18.797-18.796-18.797-49.377-.002-68.171 9.398-9.398 21.741-14.096 34.086-14.096 12.343 0 24.688 4.699 34.086 14.097l11.202 11.201 11.202-11.202c9.104-9.104 21.209-14.119 34.086-14.119 12.875 0 24.98 5.013 34.086 14.119 9.104 9.104 14.119 21.209 14.119 34.086-.001 12.875-5.015 24.98-14.12 34.085z"/></g></svg>`,
+
+  recepcion: `<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" id="Layer_1" fill="#000" stroke="#000" stroke-width="7.44" viewBox="0 0 496 496"><path id="SVGRepo_iconCarrier" d="M408 84.28C408 64.272 391.728 48 371.72 48c-9.696 0-18.808 3.776-25.656 10.624L328 76.688l-18.064-18.064C303.088 51.776 293.976 48 284.28 48 264.272 48 248 64.272 248 84.28c0 9.696 3.776 18.808 10.624 25.656L328 179.312l69.376-69.376C404.224 103.088 408 93.976 408 84.28zm-21.936 14.344L328 156.688l-58.064-58.064A20.16 20.16 0 0 1 264 84.28C264 73.104 273.104 64 284.28 64a20.17 20.17 0 0 1 14.344 5.936L328 99.312l29.376-29.376A20.16 20.16 0 0 1 371.72 64C382.896 64 392 73.104 392 84.28c0 5.424-2.112 10.52-5.936 14.344zM109.248 185.96C100.952 178.752 96 166.064 96 152.024v-25.496c9.288-3.312 16-12.112 16-22.528V41.76c4.872-4.4 8-10.696 8-17.76 0-13.232-10.768-24-24-24H48C34.768 0 24 10.768 24 24c0 7.064 3.128 13.36 8 17.76V104c0 10.416 6.704 19.216 16 22.528v25.792c0 13.672-5.072 26.552-13.24 33.632C22.608 196.48 0 216.08 0 240v232c0 13.232 10.768 24 24 24h96c13.232 0 24-10.768 24-24V240c0-23.832-22.608-43.48-34.752-54.04zM96 104c0 4.416-3.584 8-8 8H56c-4.416 0-8-3.584-8-8V48h48zM40 24c0-4.416 3.584-8 8-8h48c4.416 0 8 3.584 8 8s-3.584 8-8 8H48c-4.416 0-8-3.584-8-8zm88 448c0 4.416-3.584 8-8 8H24c-4.416 0-8-3.584-8-8v-56h112zm0-72H16V264h112zm0-152H16v-8c0-16.616 19.024-33.104 29.24-41.952C56.984 187.864 64 170.776 64 152.32V128h16v24.024c0 18.6 7.008 35.808 18.752 46.016C108.976 206.92 128 223.464 128 240zm93.864-59.432L192.976 330.04c-2.448 15.296 1.928 31.032 12.328 44.32 9.584 12.248 23.416 20.896 38.056 24.16l-6.504 76.904-44.24-3.4-1.232 15.952 104 8 1.232-15.952-43.808-3.368 6.496-76.8c14.976-.76 30.056-6.936 41.568-17.408 12.48-11.352 19.448-26.136 19.6-41.968l-4.712-143.976zm12.832 17.144 65.528 5.544 3.288 100.224c-23.032-2.472-35.616-14.888-49.864-29.136-10.064-10.064-22.408-12.408-32.096-12.32zm55.416 164.896c-10.352 9.408-24.392 14.328-37.488 13.248-13.128-1.12-26.112-8.352-34.72-19.36-7.624-9.744-10.864-21.088-9.192-31.592l9.536-46.68c6.808-.608 16.736.08 24.096 7.432 14.808 14.816 31.616 31.264 61.696 33.824l.432 13.184c-.112 10.992-5.216 21.624-14.36 29.944zm139.952 104.536-10.296-77.288c14.464-3.96 27.864-13.256 36.856-25.952 9.752-13.768 13.368-29.696 10.12-45.192l-35.56-139.592-93.416 12.432 2.208 144.384c.904 15.464 8.568 29.888 21.576 40.624 12 9.904 27.36 15.424 42.36 15.464l10.168 76.368-46.72 3.64 1.248 15.952 111.048-8.648-1.248-15.952zm-76.072-261.616 65.2-8.68 27.704 108.736c-6.912 2.12-16.192 7.096-22.056 18.832-3.408 6.824-8.376 11.368-13.288 12.168-4.328.752-9.04-1.4-13.896-6.24-14.424-14.424-34.04-17.496-42.04-18.16zm55.816 170.12c-13.104 1.736-27.296-2.536-38.064-11.432-9.544-7.872-15.144-18.256-15.776-28.88l-.104-7.064c6.64.72 20.504 3.408 30.48 13.384 8.744 8.744 17.112 11.064 23.52 11.064 1.536 0 2.96-.136 4.248-.336 10.128-1.648 19.248-9.224 25.04-20.808 3.168-6.344 8.008-9.16 11.704-10.456l.304 1.2c2.248 10.76-.448 22.24-7.592 32.336-8.08 11.408-20.696 19.248-33.76 20.992zM480 120h16v16h-16zm-1.382-25.961 11.313 11.313-11.313 11.314-11.314-11.314zM448 88h16v16h-16zm-3.325 17.36-11.314 11.314-11.314-11.314 11.314-11.313zM416 120h16v16h-16zm17.362 41.955-11.314-11.314 11.314-11.313 11.314 11.313zM448 152h16v16h-16zm30.617 9.933-11.314-11.314 11.314-11.313 11.313 11.313zM216 32h16v16h-16zm-1.376-25.933 11.313 11.314-11.313 11.313-11.314-11.313zM184 0h16v16h-16zm-14.629 28.71-11.313-11.313L169.37 6.084l11.314 11.313zM152 32h16v16h-16zm17.366 41.954L158.052 62.64l11.314-11.313 11.313 11.313zM184 64h16v16h-16zm19.313-1.366 11.313-11.314 11.314 11.314-11.314 11.313zM416 16h16v16h-16zM216 144h16v16h-16z"/></svg>`,
+};
+---
+
+<section id="ubicacion" class="w-full pb-28 px-6 bg-[#f0f4fa] flex flex-col items-center gap-16 relative overflow-hidden">
+
+  <!-- Decorativos -->
+  <svg class="absolute top-0 left-0 w-64 opacity-5 pointer-events-none" viewBox="0 0 200 200" fill="none">
+    <circle cx="0" cy="0" r="80"  stroke="#4a7ab5" stroke-width="1"/>
+    <circle cx="0" cy="0" r="120" stroke="#4a7ab5" stroke-width="1"/>
+    <circle cx="0" cy="0" r="160" stroke="#4a7ab5" stroke-width="1"/>
+  </svg>
+  <svg class="absolute bottom-0 right-0 w-64 opacity-5 rotate-180 pointer-events-none" viewBox="0 0 200 200" fill="none">
+    <circle cx="0" cy="0" r="80"  stroke="#4a7ab5" stroke-width="1"/>
+    <circle cx="0" cy="0" r="120" stroke="#4a7ab5" stroke-width="1"/>
+    <circle cx="0" cy="0" r="160" stroke="#4a7ab5" stroke-width="1"/>
+  </svg>
+
+  <!-- Header -->
+  <div class="ubi-item flex flex-col items-center gap-4 text-center relative z-10">
+    <div class="flex items-center gap-4">
+      <div class="w-9 h-px bg-blue-400/35"></div>
+      <span class="font-[Jost] text-[0.58rem] tracking-[0.35em] uppercase text-blue-950/40">Nos vemos aquí</span>
+      <div class="w-9 h-px bg-blue-400/35"></div>
+    </div>
+    <h2 class="font-[Cormorant_Garamond] text-[clamp(2rem,5vw,3rem)] italic text-blue-950 font-normal leading-tight">
+      Lugar & Horarios
+    </h2>
+  </div>
+
+  <!-- Línea de tiempo -->
+  <div class="ubi-item relative z-10 w-full max-w-3xl flex flex-col gap-0">
+    {lugares.map((lugar, i) => (
+      <div class="lugar-card flex gap-6 group">
+
+        <!-- Timeline -->
+        <div class="flex flex-col items-center">
+          <div class="w-10 h-10 rounded-full bg-white border-2 border-blue-400/40 flex items-center justify-center shrink-0 group-hover:border-blue-500 group-hover:bg-blue-50 transition-all duration-300 z-10 p-1.5">
+            <Fragment set:html={iconos[lugar.icono ?? 'iglesia']} />
+          </div>
+          {i < lugares.length - 1 && (
+            <div class="w-px flex-1 bg-blue-200/50 my-1 min-h-[3rem]"></div>
+          )}
+        </div>
+
+        <!-- Card -->
+        <div class="pb-10 flex-1">
+          <div class="bg-white border border-blue-100/80 rounded p-6 flex flex-col gap-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+
+            <!-- Tipo + hora -->
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <span class="font-[Jost] text-[0.55rem] tracking-[0.3em] uppercase text-blue-500 font-medium">
+                {lugar.tipo}
+              </span>
+              <span class="font-[Jost] text-[0.6rem] tracking-[0.15em] text-blue-950/40 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+                {lugar.hora}
+              </span>
+            </div>
+
+            <!-- Nombre -->
+            <h3 class="font-[Cormorant_Garamond] text-xl md:text-2xl italic text-blue-950 font-normal leading-snug">
+              {lugar.nombre}
+            </h3>
+
+            <!-- Dirección -->
+            {lugar.direccion && (
+              <p class="font-[Jost] text-xs text-blue-950/50 leading-relaxed">
+                {lugar.direccion}
+              </p>
+            )}
+
+            <!-- Descripción -->
+            {lugar.descripcion && (
+              <p class="font-[Cormorant_Garamond] text-base italic text-blue-950/60 leading-relaxed border-l-2 border-blue-200 pl-3">
+                {lugar.descripcion}
+              </p>
+            )}
+
+            <!-- Botón mapa -->
+            {lugar.mapaUrl && (
+              
+                <a href={lugar.mapaUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="self-start flex items-center gap-2 px-4 py-2 text-[0.6rem] font-[Jost] tracking-[0.2em] uppercase text-white bg-blue-950 rounded hover:bg-blue-500 transition-colors duration-300 mt-1"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                Ver en Google Maps
+              </a>
+            )}
+          </div>
+        </div>
+
+      </div>
+    ))}
+  </div>
+
+</section>
+
+<style>
+  .ubi-item, .lugar-card {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .ubi-item.visible, .lugar-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<script>
+  const ubiEls = document.querySelectorAll('.ubi-item, .lugar-card');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 120);
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  ubiEls.forEach(el => obs.observe(el));
+</script>

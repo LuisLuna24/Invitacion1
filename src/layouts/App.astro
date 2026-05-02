@@ -1,0 +1,490 @@
+---
+import '../styles/global.css'
+
+interface Props {
+	title?: string;
+	nombres?: string;
+}
+
+const { 
+	title = "¡Nos Casamos! - Nuestra Boda",
+	nombres = "Viridiana & Alexis" 
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es" class="scroll-smooth">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+	<meta name="generator" content={Astro.generator} />
+	<title>{title}</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+	
+	<style>
+		:root {
+			--cream: #f0f4fa;
+			--blue: #4a7ab5;
+			--blue-light: #7aaad4;
+			--deep: #0a1628;
+			--navy: #0d2448;
+			--text: #1a2a40;
+		}
+
+		*, *::before, *::after {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		html {
+			width: 100%;
+			overflow-x: hidden;
+		}
+
+		body {
+			width: 100%;
+			min-height: 100vh;
+			display: flex;
+			flex-direction: column;
+			align-items: stretch;
+			overflow-x: hidden;
+			background: var(--cream);
+			color: var(--text);
+			font-family: 'Jost', sans-serif;
+			-webkit-font-smoothing: antialiased;
+		}
+
+		/* ── LOADER ─────────────────────────────────── */
+		#loader {
+			position: fixed;
+			inset: 0;
+			z-index: 9999;
+			background: var(--deep);
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 2rem;
+			transition: opacity 0.8s ease, visibility 0.8s ease;
+		}
+		#loader.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+
+		.loader-names {
+			font-family: 'Cormorant Garamond', serif;
+			font-size: clamp(2.5rem, 8vw, 5rem);
+			font-style: italic;
+			color: var(--blue-light);
+			letter-spacing: 0.05em;
+			text-align: center;
+			opacity: 0;
+			transform: translateY(20px);
+			animation: fadeUp 1s ease 0.3s forwards;
+		}
+		.loader-line {
+			width: 0;
+			height: 1px;
+			background: linear-gradient(90deg, transparent, var(--blue), transparent);
+			animation: expandLine 1.5s ease 0.8s forwards;
+		}
+		.loader-sub {
+			font-family: 'Jost', sans-serif;
+			font-size: 0.65rem;
+			letter-spacing: 0.35em;
+			text-transform: uppercase;
+			color: var(--blue-light);
+			text-align: center;
+			opacity: 0;
+			animation: fadeUp 1s ease 1.2s forwards;
+		}
+		.loader-petals {
+			position: absolute;
+			inset: 0;
+			overflow: hidden;
+			pointer-events: none;
+		}
+		.petal {
+			position: absolute;
+			width: 6px;
+			height: 10px;
+			background: radial-gradient(ellipse, #b8d0e8 0%, transparent 70%);
+			border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+			opacity: 0;
+			animation: fall linear infinite;
+		}
+
+		@keyframes fadeUp    { to { opacity: 1; transform: translateY(0); } }
+		@keyframes expandLine { to { width: 200px; } }
+		@keyframes fall {
+			0%   { transform: translateY(-20px) rotate(0deg);   opacity: 0; }
+			10%  { opacity: 0.6; }
+			90%  { opacity: 0.3; }
+			100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+		}
+
+		/* ── HEADER ─────────────────────────────────── */
+		header {
+			width: 100%;
+			position: fixed;
+			top: 0;
+			z-index: 50;
+			background: rgba(240, 244, 250, 0.96);
+			backdrop-filter: blur(12px);
+			border-bottom: 1px solid rgba(74, 122, 181, 0.2);
+		}
+
+		.header-inner {
+			width: 100%;
+			max-width: 1280px;
+			margin: 0 auto;
+			padding: 0 1.5rem;
+			height: 5rem;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+		}
+
+		.nav-left {
+			display: none;
+			position: absolute;
+			left: 2rem;
+			gap: 2.5rem;
+		}
+		.nav-right {
+			display: none;
+			position: absolute;
+			right: 2rem;
+			gap: 2.5rem;
+		}
+
+		@media (min-width: 1024px) {
+			.nav-left  { display: flex; }
+			.nav-right { display: flex; }
+			.menu-mobile { display: none !important; }
+		}
+
+		.nav-link {
+			font-family: 'Jost', sans-serif;
+			font-size: 0.65rem;
+			letter-spacing: 0.25em;
+			text-transform: uppercase;
+			color: rgba(13, 36, 72, 0.55);
+			text-decoration: none;
+			transition: color 0.3s;
+		}
+		.nav-link:hover { color: var(--blue); }
+		.nav-link-rsvp  { color: var(--blue) !important; font-weight: 500; }
+
+		.logo-text {
+			font-family: 'Cormorant Garamond', serif;
+			font-size: clamp(1.6rem, 4vw, 2.6rem);
+			font-style: italic;
+			color: var(--navy);
+			text-decoration: none;
+			letter-spacing: 0.02em;
+			white-space: nowrap;
+			/* Centrado absoluto perfecto */
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
+		}
+		.logo-text span { color: var(--blue); }
+
+		.menu-mobile {
+			position: absolute;
+			right: 1rem;
+			background: none;
+			border: none;
+			cursor: pointer;
+			color: var(--navy);
+			padding: 0.5rem;
+		}
+
+		/* ── MAIN ───────────────────────────────────── */
+		main {
+			flex: 1;
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		/* ── MUSIC BTN ──────────────────────────────── */
+		#music-btn {
+			position: fixed;
+			bottom: 2rem;
+			right: 2rem;
+			width: 52px;
+			height: 52px;
+			border-radius: 50%;
+			background: var(--deep);
+			border: 1px solid var(--blue);
+			color: var(--blue-light);
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			z-index: 100;
+			transition: transform 0.3s, background 0.3s;
+			box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+		}
+		#music-btn:hover { transform: scale(1.1); background: var(--blue); color: #f0f4fa; }
+
+		.music-waves { display: flex; gap: 2px; align-items: center; }
+		.music-waves span {
+			display: block;
+			width: 3px;
+			background: currentColor;
+			border-radius: 2px;
+			animation: wave 0.8s ease-in-out infinite alternate;
+		}
+		.music-waves span:nth-child(1) { height: 8px;  animation-delay: 0s; }
+		.music-waves span:nth-child(2) { height: 14px; animation-delay: 0.15s; }
+		.music-waves span:nth-child(3) { height: 10px; animation-delay: 0.3s; }
+		.music-waves span:nth-child(4) { height: 16px; animation-delay: 0.45s; }
+		.music-waves span:nth-child(5) { height: 6px;  animation-delay: 0.6s; }
+		.music-waves.paused span { animation-play-state: paused; }
+
+		@keyframes wave {
+			from { transform: scaleY(0.4); }
+			to   { transform: scaleY(1); }
+		}
+
+		/* ── FOOTER ─────────────────────────────────── */
+		footer {
+			width: 100%;
+			background: var(--deep);
+			border-top: 1px solid rgba(74, 122, 181, 0.15);
+			padding: 5rem 1rem;
+			text-align: center;
+		}
+		.footer-inner {
+			max-width: 1280px;
+			margin: 0 auto;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 1.25rem;
+		}
+		.footer-frase {
+			font-family: 'Cormorant Garamond', serif;
+			font-size: 1.875rem;
+			font-style: italic;
+			color: var(--blue-light);
+		}
+		.footer-divider {
+			width: 60px;
+			height: 1px;
+			background: rgba(74,122,181,0.4);
+		}
+		.footer-hashtag {
+			font-family: 'Jost', sans-serif;
+			font-size: 0.6rem;
+			letter-spacing: 0.3em;
+			text-transform: uppercase;
+			color: var(--blue-light);
+			opacity: 0.7;
+		}
+	</style>
+</head>
+
+<body>
+
+	<!-- ═══ LOADER ═══════════════════════════════════════ -->
+	
+
+	<!-- ═══ AUDIO ════════════════════════════════════════ -->
+	<audio id="bg-music" loop preload="auto">
+		<source src="/music/song.mp3" type="audio/mpeg">
+	</audio>
+
+	<!-- ═══ HEADER ═══════════════════════════════════════ -->
+	<header>
+		<div class="header-inner">
+
+			<nav class="nav-left">
+				<a href="/#invitacion" class="nav-link">Detalles</a>
+				<a href="/#ubicacion" class="nav-link">Ubicación</a>
+			</nav>
+
+			<a href="/" class="logo-text">
+				{nombres.split('&').map((n, i) => (
+					<>
+						{i > 0 && <span> & </span>}
+						{n.trim()}
+					</>
+				))}
+			</a>
+
+			<nav class="nav-right">
+				<a href="/#collage" class="nav-link">Galeria</a>
+				<a href="/#asistencia" class="nav-link nav-link-rsvp">RSVP</a>
+			</nav>
+
+			<button class="menu-mobile" aria-label="Menú">
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.2" stroke="currentColor" width="28" height="28">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+				</svg>
+			</button>
+
+		</div>
+	</header>
+
+	<!-- ═══ MAIN ══════════════════════════════════════════ -->
+	<main>
+		<slot />
+	</main>
+
+	<!-- ═══ FOOTER ═══════════════════════════════════════ -->
+	<footer>
+		<div class="footer-inner">
+			<p class="footer-frase">¡Acompáñanos en nuestro gran día!</p>
+			<div class="footer-divider"></div>
+			<p class="footer-hashtag">#{nombres.replace(/\s|&/g, '')}</p>
+		</div>
+	</footer>
+
+	<!-- ═══ MUSIC BTN ════════════════════════════════════ -->
+	<button id="music-btn" aria-label="Música">
+		<div class="music-waves paused" id="music-waves">
+			<span></span><span></span><span></span><span></span><span></span>
+		</div>
+	</button>
+
+	<script>
+		// ── Pétalos ──────────────────────────────────────
+		const container = document.getElementById('petals-container')!;
+		for (let i = 0; i < 25; i++) {
+			const p = document.createElement('div');
+			p.className = 'petal';
+			p.style.cssText = `
+				left: ${Math.random() * 100}%;
+				animation-duration: ${3 + Math.random() * 4}s;
+				animation-delay: ${Math.random() * 3}s;
+				transform: rotate(${Math.random() * 360}deg) scale(${0.5 + Math.random()});
+			`;
+			container.appendChild(p);
+		}
+
+		const loader = document.getElementById('loader')!;
+		const audio  = document.getElementById('bg-music') as HTMLAudioElement;
+		const btn    = document.getElementById('music-btn')!;
+		const waves  = document.getElementById('music-waves')!;
+		let playing  = false;
+
+		// ── Botón "Entrar" ────────────────────────────────
+		const enterBtn = document.createElement('button');
+		enterBtn.textContent = 'Entrar';
+		enterBtn.style.cssText = `
+			margin-top: 1.5rem;
+			padding: 0.75rem 2.5rem;
+			font-family: 'Jost', sans-serif;
+			font-size: 0.65rem;
+			letter-spacing: 0.3em;
+			text-transform: uppercase;
+			background: transparent;
+			border: 1px solid #4a7ab5;
+			color: #7aaad4;
+			cursor: pointer;
+			border-radius: 2px;
+			transition: background 0.3s, color 0.3s;
+			opacity: 0;
+			animation: fadeUp 1s ease 1.8s forwards;
+		`;
+		enterBtn.onmouseenter = () => { enterBtn.style.background = '#4a7ab5'; enterBtn.style.color = '#0a1628'; };
+		enterBtn.onmouseleave = () => { enterBtn.style.background = 'transparent'; enterBtn.style.color = '#7aaad4'; };
+		loader.appendChild(enterBtn);
+
+		enterBtn.addEventListener('click', () => {
+			loader.classList.add('hide');
+			audio.volume = 0;
+			audio.play().then(() => {
+				playing = true;
+				waves.classList.remove('paused');
+				let vol = 0;
+				const fade = setInterval(() => {
+					vol = Math.min(vol + 0.02, 0.7);
+					audio.volume = vol;
+					if (vol >= 0.7) clearInterval(fade);
+				}, 80);
+			});
+		});
+
+		btn.addEventListener('click', () => {
+			if (playing) {
+				audio.pause(); playing = false; waves.classList.add('paused');
+			} else {
+				audio.play(); playing = true; waves.classList.remove('paused');
+			}
+		});
+	</script>
+
+	<script>
+  const menuBtn = document.querySelector('.menu-mobile')!;
+
+  const mobileMenu = document.createElement('div');
+  mobileMenu.style.cssText = `
+    position: fixed;
+    top: 5rem;
+    left: 0;
+    width: 100%;
+    background: rgba(240, 244, 250, 0.98);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(74, 122, 181, 0.2);
+    flex-direction: column;
+    align-items: center;
+    z-index: 49;
+    padding: 0;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    display: flex;
+    transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease, padding 0.3s ease;
+  `;
+  mobileMenu.innerHTML = `
+    <a href="#detalles"   style="width:100%;text-align:center;padding:1rem;font-family:'Jost',sans-serif;font-size:0.65rem;letter-spacing:0.25em;text-transform:uppercase;color:rgba(13,36,72,0.6);text-decoration:none;transition:color 0.2s;">Detalles</a>
+    <a href="#ubicacion"  style="width:100%;text-align:center;padding:1rem;font-family:'Jost',sans-serif;font-size:0.65rem;letter-spacing:0.25em;text-transform:uppercase;color:rgba(13,36,72,0.6);text-decoration:none;transition:color 0.2s;">Ubicación</a>
+    <a href="#regalos"    style="width:100%;text-align:center;padding:1rem;font-family:'Jost',sans-serif;font-size:0.65rem;letter-spacing:0.25em;text-transform:uppercase;color:rgba(13,36,72,0.6);text-decoration:none;transition:color 0.2s;">Mesa de Regalos</a>
+    <a href="#asistencia" style="width:100%;text-align:center;padding:1rem;font-family:'Jost',sans-serif;font-size:0.65rem;letter-spacing:0.25em;text-transform:uppercase;color:#4a7ab5;text-decoration:none;font-weight:500;transition:color 0.2s;">RSVP</a>
+  `;
+  document.body.appendChild(mobileMenu);
+
+  // Hover en links
+  mobileMenu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('mouseenter', () => (a as HTMLElement).style.color = '#4a7ab5');
+    a.addEventListener('mouseleave', () => {
+      const isRsvp = (a as HTMLElement).getAttribute('href') === '#asistencia';
+      (a as HTMLElement).style.color = isRsvp ? '#4a7ab5' : 'rgba(13,36,72,0.6)';
+    });
+  });
+
+  let open = false;
+  menuBtn.addEventListener('click', () => {
+    open = !open;
+    if (open) {
+      mobileMenu.style.maxHeight = '300px';
+      mobileMenu.style.opacity  = '1';
+      mobileMenu.style.padding  = '0.5rem 0';
+    } else {
+      mobileMenu.style.maxHeight = '0';
+      mobileMenu.style.opacity   = '0';
+      mobileMenu.style.padding   = '0';
+    }
+  });
+
+  mobileMenu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      open = false;
+      mobileMenu.style.maxHeight = '0';
+      mobileMenu.style.opacity   = '0';
+      mobileMenu.style.padding   = '0';
+    });
+  });
+</script>
+
+</body>
+</html>

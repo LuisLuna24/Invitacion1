@@ -1,0 +1,200 @@
+---
+type CodigoVestimenta = "formal" | "semiformal" | "cocktail" | "guayabera";
+
+interface Props {
+  codigoVestimenta: CodigoVestimenta;
+  coloresEvitar?: string[];
+  coloresNovio?: string[];
+  coloresNovia?: string[];
+}
+
+const {
+  codigoVestimenta,
+  coloresEvitar = [],
+  coloresNovio = [],
+  coloresNovia = [],
+} = Astro.props;
+
+const vestimentaInfo: Record<CodigoVestimenta, { label: string; desc: string; svgPath: string }> = {
+  formal: {
+    label: "Formal / Etiqueta",
+    desc: "Traje oscuro o smoking para caballeros. Vestido o traje para damas.",
+    svgPath: `<path d="M20 4 L16 10 L20 12 L20 56 L44 56 L44 12 L48 10 L44 4 L38 8 L32 4 L26 8 Z" stroke="#4a7ab5" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+      <path d="M26 8 L32 20 L38 8" stroke="#4a7ab5" stroke-width="1.5" fill="none"/>
+      <circle cx="32" cy="28" r="1.5" fill="#4a7ab5"/>
+      <circle cx="32" cy="36" r="1.5" fill="#4a7ab5"/>
+      <circle cx="32" cy="44" r="1.5" fill="#4a7ab5"/>`,
+  },
+  semiformal: {
+    label: "Semi Formal",
+    desc: "Traje en tono claro o pantalón de vestir con camisa para caballeros. Vestido midi o conjunto elegante para damas.",
+    svgPath: `<path d="M22 6 L18 14 L22 16 L22 56 L42 56 L42 16 L46 14 L42 6" stroke="#4a7ab5" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+      <path d="M22 6 Q32 12 42 6" stroke="#4a7ab5" stroke-width="1.5" fill="none"/>
+      <line x1="18" y1="22" x2="46" y2="22" stroke="#4a7ab5" stroke-width="1" stroke-dasharray="2 2"/>`,
+  },
+  cocktail: {
+    label: "Cocktail",
+    desc: "Traje con o sin corbata para caballeros. Vestido corto o midi elegante para damas.",
+    svgPath: `<path d="M24 8 L20 18 L26 22 L26 56 L38 56 L38 22 L44 18 L40 8" stroke="#4a7ab5" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+      <path d="M24 8 Q32 16 40 8" stroke="#4a7ab5" stroke-width="1.5" fill="none"/>
+      <path d="M26 30 Q32 26 38 30" stroke="#4a7ab5" stroke-width="1" fill="none"/>`,
+  },
+  guayabera: {
+    label: "Guayabera",
+    desc: "Guayabera blanca o en tono claro para caballeros. Vestido floral o en tonos claros para damas.",
+    svgPath: `<path d="M22 6 L18 16 L24 18 L24 56 L40 56 L40 18 L46 16 L42 6" stroke="#4a7ab5" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+      <line x1="30" y1="18" x2="30" y2="56" stroke="#4a7ab5" stroke-width="1"/>
+      <line x1="34" y1="18" x2="34" y2="56" stroke="#4a7ab5" stroke-width="1"/>
+      <circle cx="32" cy="22" r="1" fill="#4a7ab5"/>
+      <circle cx="32" cy="28" r="1" fill="#4a7ab5"/>
+      <circle cx="32" cy="34" r="1" fill="#4a7ab5"/>`,
+  },
+};
+
+const info = vestimentaInfo[codigoVestimenta];
+const tieneColoresReservados = coloresNovio.length > 0 || coloresNovia.length > 0;
+const tieneColoresEvitar = coloresEvitar.length > 0;
+---
+
+<section id="vestimenta" class="w-full py-28 px-6 bg-white flex flex-col items-center gap-12 relative overflow-hidden">
+
+  <svg class="absolute top-0 right-0 w-64 opacity-5 pointer-events-none" viewBox="0 0 200 200" fill="none">
+    <circle cx="200" cy="0" r="80"  stroke="#4a7ab5" stroke-width="1"/>
+    <circle cx="200" cy="0" r="120" stroke="#4a7ab5" stroke-width="1"/>
+    <circle cx="200" cy="0" r="160" stroke="#4a7ab5" stroke-width="1"/>
+  </svg>
+
+  <!-- Header -->
+  <div class="vest-item flex flex-col items-center gap-4 text-center z-10">
+    <div class="flex items-center gap-4">
+      <div class="w-9 h-px bg-blue-400/35"></div>
+      <span class="font-[Jost] text-[0.58rem] tracking-[0.35em] uppercase text-blue-950/40">Dress code</span>
+      <div class="w-9 h-px bg-blue-400/35"></div>
+    </div>
+    <h2 class="font-[Cormorant_Garamond] text-[clamp(2rem,5vw,3rem)] italic text-blue-950 font-normal">
+      Código de Vestimenta
+    </h2>
+  </div>
+
+  <!-- Card principal -->
+  <div class="vest-item z-10 w-full max-w-lg">
+    <div class="flex flex-col items-center gap-6 p-10 bg-blue-50/50 border border-blue-100 rounded text-center">
+
+      <svg viewBox="0 0 64 64" class="w-20 h-20">
+        <Fragment set:html={info.svgPath} />
+      </svg>
+
+      <div class="flex flex-col gap-2">
+        <span class="font-[Jost] text-[0.6rem] tracking-[0.3em] uppercase text-blue-500 font-medium">
+          {info.label}
+        </span>
+        <p class="font-[Cormorant_Garamond] text-lg italic text-blue-950/70 leading-relaxed font-light">
+          {info.desc}
+        </p>
+      </div>
+
+      <!-- Colores a evitar (general) -->
+      {tieneColoresEvitar && (
+        <div class="flex flex-col items-center gap-3 pt-4 border-t border-blue-100 w-full">
+          <span class="font-[Jost] text-[0.55rem] tracking-[0.25em] uppercase text-blue-950/40">
+            Por favor evitar
+          </span>
+          <div class="flex flex-wrap justify-center gap-2">
+            {coloresEvitar.map(color => (
+              <span class="font-[Jost] text-[0.6rem] tracking-[0.15em] uppercase px-3 py-1 border border-blue-100 rounded-full text-blue-950/50 bg-white">
+                {color}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
+
+  <!-- Colores reservados -->
+  {tieneColoresReservados && (
+    <div class="vest-item z-10 w-full max-w-2xl flex flex-col items-center gap-6">
+
+      <!-- Separador -->
+      <div class="flex items-center gap-4 w-full">
+        <div class="flex-1 h-px bg-gradient-to-r from-transparent to-blue-200/40"></div>
+        <span class="font-[Jost] text-[0.55rem] tracking-[0.3em] uppercase text-blue-950/30">Colores reservados</span>
+        <div class="flex-1 h-px bg-gradient-to-l from-transparent to-blue-200/40"></div>
+      </div>
+
+      <div class="w-full flex flex-col sm:flex-row gap-6">
+
+        <!-- Novio -->
+        {coloresNovio.length > 0 && (
+          <div class="flex-1 flex flex-col items-center gap-4 p-6 bg-blue-950/[0.03] border border-blue-100 rounded">
+            <!-- Ícono novio -->
+            <svg viewBox="0 0 32 32" class="w-8 h-8" fill="none" stroke="#4a7ab5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="16" cy="8" r="4"/>
+              <path d="M10 28 V20 M22 28 V20 M8 20 Q16 14 24 20"/>
+              <line x1="13" y1="20" x2="13" y2="28"/>
+              <line x1="19" y1="20" x2="19" y2="28"/>
+            </svg>
+            <span class="font-[Jost] text-[0.55rem] tracking-[0.28em] uppercase text-blue-500 font-medium">
+              Colores reservados para el novio
+            </span>
+            <div class="flex flex-wrap justify-center gap-2">
+              {coloresNovio.map(color => (
+                <span class="font-[Jost] text-[0.58rem] tracking-[0.12em] uppercase px-3 py-1.5 border border-blue-200 rounded-full text-blue-950/60 bg-white flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-blue-400/50 inline-block"></span>
+                  {color}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <!-- Novia -->
+        {coloresNovia.length > 0 && (
+          <div class="flex-1 flex flex-col items-center gap-4 p-6 bg-blue-950/[0.03] border border-blue-100 rounded">
+            <!-- Ícono novia -->
+            <svg viewBox="0 0 32 32" class="w-8 h-8" fill="none" stroke="#4a7ab5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="16" cy="8" r="4"/>
+              <path d="M10 14 Q16 12 22 14 L24 28 H8 Z"/>
+              <line x1="12" y1="20" x2="20" y2="20"/>
+            </svg>
+            <span class="font-[Jost] text-[0.55rem] tracking-[0.28em] uppercase text-blue-500 font-medium">
+              Colores reservados para la novia
+            </span>
+            <div class="flex flex-wrap justify-center gap-2">
+              {coloresNovia.map(color => (
+                <span class="font-[Jost] text-[0.58rem] tracking-[0.12em] uppercase px-3 py-1.5 border border-blue-200 rounded-full text-blue-950/60 bg-white flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-blue-400/50 inline-block"></span>
+                  {color}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+      </div>
+    </div>
+  )}
+
+</section>
+
+<style>
+  .vest-item {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .vest-item.visible { opacity: 1; transform: translateY(0); }
+</style>
+
+<script>
+  const els = document.querySelectorAll('.vest-item');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 120);
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  els.forEach(el => obs.observe(el));
+</script>

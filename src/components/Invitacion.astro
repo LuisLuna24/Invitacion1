@@ -1,0 +1,102 @@
+---
+// src/components/Invitacion.astro
+
+interface Props {
+  novia: string;
+  novio: string;
+  titulo?: string;
+  texto?: string;
+  imagenArgollas?: string;
+  etiqueta?: string;
+}
+
+const {
+  novia,
+  novio,
+  titulo = "Nuestra Boda",
+  texto = "A ustedes nuestra familia, los conocemos, los amamos y los consentiremos en nuestra boda. Contamos con su compañía en esta fecha para formar parte de este momento inolvidable.",
+  imagenArgollas = "/images/argollas.webp",
+  etiqueta = "Con amor",
+} = Astro.props;
+---
+
+<section id="invitacion" class="w-full py-28 px-6 bg-white relative overflow-hidden flex flex-col items-center justify-center">
+
+  <!-- Esquina superior izquierda -->
+  <svg class="absolute top-0 left-0 w-48 opacity-[0.07] pointer-events-none" viewBox="0 0 200 200" fill="none">
+    <circle cx="0" cy="0" r="80"  stroke="#4a7ab5" stroke-width="1"/>
+    <circle cx="0" cy="0" r="120" stroke="#4a7ab5" stroke-width="1"/>
+    <circle cx="0" cy="0" r="160" stroke="#4a7ab5" stroke-width="1"/>
+  </svg>
+
+  <!-- Esquina inferior derecha -->
+  <svg class="absolute bottom-0 right-0 w-48 opacity-[0.07] rotate-180 pointer-events-none" viewBox="0 0 200 200" fill="none">
+    <circle cx="0" cy="0" r="80"  stroke="#4a7ab5" stroke-width="1"/>
+    <circle cx="0" cy="0" r="120" stroke="#4a7ab5" stroke-width="1"/>
+    <circle cx="0" cy="0" r="160" stroke="#4a7ab5" stroke-width="1"/>
+  </svg>
+
+  <!-- Contenido -->
+  <div class="inv-item relative z-10 max-w-xl w-full flex flex-col items-center gap-5 text-center">
+
+    <!-- Etiqueta -->
+    <div class="flex items-center gap-4">
+      <div class="w-9 h-px bg-blue-400/35"></div>
+      <span class="font-[Jost] text-[0.58rem] tracking-[0.35em] uppercase text-blue-950/40">{etiqueta}</span>
+      <div class="w-9 h-px bg-blue-400/35"></div>
+    </div>
+
+    <!-- Argollas -->
+    <img
+      src={imagenArgollas}
+      alt="Argollas"
+      class="w-[clamp(100px,25vw,160px)] object-contain opacity-85"
+    />
+
+    <!-- Título -->
+    <h2 class="font-[Cormorant_Garamond] text-[clamp(2rem,5vw,3rem)] italic text-blue-950 leading-tight font-normal">
+      {titulo}
+    </h2>
+
+    <!-- Texto -->
+    <p class="font-[Cormorant_Garamond] text-[clamp(1.15rem,2.5vw,1.45rem)] italic font-light text-blue-950/70 leading-loose">
+      "{texto}"
+    </p>
+
+    <!-- Firmas -->
+    <div class="flex flex-wrap items-center justify-center gap-4 mt-2">
+      <span class="font-[Cormorant_Garamond] text-xl md:text-2xl italic text-blue-950">{novia}</span>
+      <svg viewBox="0 0 40 20" class="w-9 opacity-40 shrink-0">
+        <path d="M5 10 Q20 2 35 10 Q20 18 5 10Z" fill="#4a7ab5"/>
+      </svg>
+      <span class="font-[Cormorant_Garamond] text-xl md:text-2xl italic text-blue-950">{novio}</span>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .inv-item {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+  .inv-item.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<script>
+  const invItem = document.querySelector('.inv-item');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.2 });
+
+  if (invItem) observer.observe(invItem);
+</script>

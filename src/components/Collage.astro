@@ -1,0 +1,130 @@
+---
+// src/components/Collage.astro
+
+interface Foto {
+  src: string;
+  alt?: string;
+}
+
+interface Props {
+  fotos: Foto[];
+  galeriaPagina?: string;
+  titulo?: string;
+  etiqueta?: string;
+  textBoton?: string;
+}
+
+const {
+  fotos,
+  galeriaPagina = "/galeria",
+  titulo = "Nuestra Historia",
+  etiqueta = "Nuestros momentos",
+  textBoton = "Ver toda la galería",
+} = Astro.props;
+---
+
+<section id="collage" class="w-full py-24 px-6 bg-[#f0f4fa] flex flex-col items-center gap-12 relative overflow-hidden">
+
+  <!-- Header -->
+  <div class="collage-header flex flex-col items-center gap-4 text-center">
+    <div class="flex items-center gap-4">
+      <div class="w-9 h-px bg-blue-400/35"></div>
+      <span class="font-[Jost] text-[0.58rem] tracking-[0.35em] uppercase text-blue-950/40">{etiqueta}</span>
+      <div class="w-9 h-px bg-blue-400/35"></div>
+    </div>
+    <h2 class="font-[Cormorant_Garamond] text-[clamp(2rem,5vw,3rem)] italic text-blue-950 font-normal">
+      {titulo}
+    </h2>
+  </div>
+
+  <!-- Masonry grid -->
+  <div id="masonry-grid" class="w-full max-w-4xl" style="columns:3; column-gap:0.75rem;">
+    {fotos.map((foto, i) => (
+      <div
+        class="masonry-item"
+        style="break-inside:avoid; margin-bottom:0.75rem; border-radius:6px; overflow:hidden; cursor:pointer; position:relative;"
+      >
+        <img
+          src={foto.src}
+          alt={foto.alt ?? `Foto ${i + 1}`}
+          loading="lazy"
+          class="w-full block object-cover rounded-md"
+          style="transition: transform 0.5s ease;"
+          onerror={`this.parentElement.style.background='linear-gradient(160deg,#c8ddf0,#7aaad4)';this.parentElement.style.minHeight='${150 + (i % 3) * 60}px';this.style.display='none';`}
+        />
+        <!-- Overlay -->
+        <div class="foto-overlay absolute inset-0 rounded-md flex items-end p-4"
+          style="background: linear-gradient(to top, rgba(10,22,40,0.5) 0%, transparent 60%); opacity:0; transition: opacity 0.3s ease;">
+          <span class="font-[Cormorant_Garamond] italic text-white text-sm opacity-90">
+            {foto.alt ?? `Foto ${i + 1}`}
+          </span>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- Fade degradado -->
+  <div class="absolute bottom-20 left-0 w-full h-52 pointer-events-none"
+    style="background: linear-gradient(to bottom, transparent, #f0f4fa);"></div>
+
+  <!-- Botón -->
+  
+    <a href={galeriaPagina}
+    class="relative z-10 inline-flex items-center gap-3 px-10 py-4 font-[Jost] text-[0.65rem] tracking-[0.3em] uppercase text-[#f0f4fa] bg-blue-950 border border-blue-400/30 rounded-sm hover:bg-blue-500 transition-colors duration-300"
+  >
+    {textBoton}
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
+    </svg>
+  </a>
+
+</section>
+
+<style>
+  @media (max-width: 640px) {
+    #masonry-grid { columns: 2; }
+  }
+
+  .masonry-item {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .masonry-item.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .masonry-item:hover img       { transform: scale(1.04); }
+  .masonry-item:hover .foto-overlay { opacity: 1 !important; }
+
+  .collage-header {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .collage-header.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<script>
+  const items  = document.querySelectorAll('.masonry-item');
+  const header = document.querySelector('.collage-header');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  items.forEach((item, i) => {
+    (item as HTMLElement).style.transitionDelay = `${i * 0.07}s`;
+    observer.observe(item);
+  });
+
+  if (header) observer.observe(header);
+</script>
